@@ -78,6 +78,13 @@ func postTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Проверка на наличие задачи по ID
+	_, ok := tasks[task.ID]
+	if ok {
+		http.Error(w, "Задача с таким ID уже существует", http.StatusBadRequest)
+		return
+	}
+
 	tasks[task.ID] = task
 
 	// запись в заголовок
@@ -116,8 +123,8 @@ func getTask(w http.ResponseWriter, r *http.Request) {
 	// статус OK
 	w.WriteHeader(http.StatusOK)
 
-	// запись сериализованных данных json в тело ответа
-	w.Write(resp)
+	// запись сериализованных данных json в тело ответа с игнорированием ошибки
+	_, _ = w.Write(resp)
 }
 
 // Обработчик удаления задачи по ID:
